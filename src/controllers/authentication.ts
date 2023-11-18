@@ -5,9 +5,9 @@ import {authentication, random} from "../helpers";
 export const login = async (req: express.Request, res: express.Response) => {
     try {
         const {email, password} = req.body;
-        if (!email || !password) return res.status(400);
+        if (!email || !password) return res.sendStatus(400);
         const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
-        if (!user) return res.status(400);
+        if (!user) return res.sendStatus(400);
         const expectedHash = authentication(user.authentication.salt, password);
         if (user.authentication.password != expectedHash) return res.sendStatus(403);
         const salt = random();
@@ -17,7 +17,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         return res.status(200).json(user).end(); //https://www.youtube.com/watch?v=b8ZUb_Okxro&t=1939s
     } catch (error) {
         console.log(error);
-        return res.status(400);
+        return res.sendStatus(400);
     }
 }
 
